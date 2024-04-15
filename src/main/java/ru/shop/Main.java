@@ -24,7 +24,7 @@ public class Main {
         CustomerService cS = new CustomerService(cR);
         OrderService oS = new OrderService(oR);
 
-        Product chocolate = new Product(UUID.randomUUID().toString(), "Шоколадный батончик", 0, ProductType.GOOD);
+        Product chocolate = new Product(UUID.randomUUID().toString(), "Шоколадный батончик", 70, ProductType.GOOD);
         pS.save(chocolate);
 
         Product milk = new Product(UUID.randomUUID().toString(), "Молоко 1л", 80, ProductType.GOOD);
@@ -43,8 +43,10 @@ public class Main {
         pS.save(shoeRepair);
 
         for(var i: pS.findAll()){
-            if(i.id()==null || i.cost()<=0 || i.name()==null || i.productType()==null)
+            if(i.id()==null || i.cost()<=0 || i.name()==null || i.productType()==null){
+                System.out.println("Товар не соответствует");
                 return ;
+            }
         }
 
         Customer bulat = new Customer(UUID.randomUUID().toString(), "Таштимиров Булат", "89123456789", 19);
@@ -56,19 +58,23 @@ public class Main {
         Customer arslan = new Customer(UUID.randomUUID().toString(), "Валитов Арслан", "89981237645", 19);
         cS.save(arslan);
 
-        for(var i: cS.findAll()){
-            if(i.id()==null || i.name()==null || i.phone().length()!=11  || i.age()<=0)
+        for (var i: cS.findAll()){
+            if(i.id()==null || i.name()==null || i.phone().length()!=11  || i.age()<=0){
+                System.out.println("Покупатель не соответствует");
                 return ;
+            }
         }
 
         oS.add(aidar, chocolate, 1);
-        oS.add(bulat, refrigeratorRepair, 1);
+        oS.add(bulat , refrigeratorRepair, 1);
         oS.add(arslan, shoeRepair, 50);
         oS.add(arslan, milk, 4);
 
         for(var i: oS.findAll()){
-            if(i.id()==null || i.productId()==null || i.customerId()==null)
+            if(i.id()==null || i.productId()==null || i.customerId()==null){
+                System.out.println("Заказ не соответствует");
                 return ;
+            }
         }
 
         for(var i: oS.findAll()){
@@ -76,6 +82,7 @@ public class Main {
                 oS.badOrderCount(i);
             } catch (BadOrderCountException e){
                 System.out.println("count cannot be less than or equal to 0");
+                return;
             }
         }
 
@@ -84,15 +91,11 @@ public class Main {
         System.out.println("Количество заказовиз категории \"Товары\": " + pS.findByProductType(ProductType.GOOD).size());
         System.out.println("Количество заказов из категории \"Услуги\": " + pS.findByProductType(ProductType.SERVICE).size());
 
-        int cnt=0;
         for(var i: cS.findAll()){
-            for(var j: oS.findByCustomer(i)){
-                cnt++;
-            }
-            System.out.println("Количество заказов " + i.name() + ": " + cnt);
-            cnt =0;
+            System.out.println("Количество заказов " + i.name() + ": " + oS.findByCustomer(i).size());
         }
 
+        long cnt=0;
         for(var i: cS.findAll()){
             for(var j: oS.findByCustomer(i)){
                 cnt+=j.amount();
