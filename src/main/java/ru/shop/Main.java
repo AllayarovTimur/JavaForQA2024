@@ -24,7 +24,7 @@ public class Main {
         CustomerService cS = new CustomerService(cR);
         OrderService oS = new OrderService(oR);
 
-        Product chocolate = new Product(UUID.randomUUID().toString(), "Шоколадный батончик", 70, ProductType.GOOD);
+        Product chocolate = new Product(UUID.randomUUID().toString(), "Шоколадный батончик", 0, ProductType.GOOD);
         pS.save(chocolate);
 
         Product milk = new Product(UUID.randomUUID().toString(), "Молоко 1л", 80, ProductType.GOOD);
@@ -42,12 +42,10 @@ public class Main {
         Product shoeRepair = new Product(UUID.randomUUID().toString(), "Ремонт обуви", 400, ProductType.SERVICE);
         pS.save(shoeRepair);
 
-        /*for(var i: pS.findAll()){
-            //switch (i)
-            if(i.id()==null)
+        for(var i: pS.findAll()){
+            if(i.id()==null || i.cost()<=0 || i.name()==null || i.productType()==null)
                 return ;
-
-        }*/
+        }
 
         Customer bulat = new Customer(UUID.randomUUID().toString(), "Таштимиров Булат", "89123456789", 19);
         cS.save(bulat);
@@ -58,11 +56,20 @@ public class Main {
         Customer arslan = new Customer(UUID.randomUUID().toString(), "Валитов Арслан", "89981237645", 19);
         cS.save(arslan);
 
+        for(var i: cS.findAll()){
+            if(i.id()==null || i.name()==null || i.phone().length()!=11  || i.age()<=0)
+                return ;
+        }
 
         oS.add(aidar, chocolate, 1);
         oS.add(bulat, refrigeratorRepair, 1);
         oS.add(arslan, shoeRepair, 50);
         oS.add(arslan, milk, 4);
+
+        for(var i: oS.findAll()){
+            if(i.id()==null || i.productId()==null || i.customerId()==null)
+                return ;
+        }
 
         for(var i: oS.findAll()){
             try{
